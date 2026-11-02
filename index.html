@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soundline Arc · Wireless noise-cancelling headphones</title>
+<meta name="description" content="A scroll-driven 3D product page for the Soundline Arc, a made-up pair of headphones. Built with Three.js, GSAP ScrollTrigger and Lenis.">
+<meta name="theme-color" content="#0a0b0d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- the fonts load without holding up the page; until they arrive it uses the system fonts -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+</head>
+<body>
+  <canvas id="scene" aria-hidden="true"></canvas>
+  <div class="callouts" id="callouts" aria-hidden="true"></div>
+
+  <header class="top">
+    <a class="logo" href="#hero" aria-label="Soundline, back to the top">sound<span>line</span></a>
+    <nav aria-label="Sections">
+      <a href="#design">Design</a><a href="#inside">Inside</a><a href="#driver">Sound</a><a href="#quiet">Quiet</a><a href="#battery">Battery</a><a href="#colours">Colours</a>
+    </nav>
+    <a class="pill" href="#buy">Pre-order</a>
+    <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+  </header>
+
+  <main>
+    <section class="chapter hero" id="hero" data-chapter>
+      <div class="panel center">
+        <p class="eyebrow">Soundline Arc</p>
+        <h1>Quiet, <em>by design.</em></h1>
+        <p class="lede">Wireless over-ear headphones with adaptive noise cancelling and a 60-hour battery.</p>
+        <p class="scroll-cue" aria-hidden="true"><span></span>Scroll to explore</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="design" data-chapter>
+      <div class="panel right">
+        <p class="eyebrow">Design</p>
+        <h2>Machined, <em>not moulded.</em></h2>
+        <p>The yokes and caps start as solid blocks of aluminium and are cut to shape, then bead-blasted and anodised. The weight sits low and close to your head, so 268&nbsp;grams feels like less.</p>
+        <dl class="stats">
+          <div><dt>Weight</dt><dd>268 g</dd></div>
+          <div><dt>Clamp force</dt><dd>4.2 N</dd></div>
+          <div><dt>Folds flat</dt><dd>38 mm</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="chapter tall" id="inside" data-chapter>
+      <div class="panel left narrow">
+        <p class="eyebrow">Inside</p>
+        <h2>Seven layers, <em>one sound.</em></h2>
+        <p>Take an Arc apart and every layer has a job, from the foam against your ear to the light on the cap.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="driver" data-chapter>
+      <div class="panel right">
+        <p class="eyebrow">Sound</p>
+        <h2>Big sound, <em>small cone.</em></h2>
+        <p>A 40&nbsp;mm driver with a beryllium-coated dome: stiff enough not to flex, light enough to stop the moment a note does. Bass you feel, highs that don't hiss.</p>
+        <button class="play" id="play" type="button" aria-pressed="false"><span class="icon" aria-hidden="true"></span><span class="label">Play the demo loop</span></button>
+        <p class="small">Made in your browser with the Web Audio API. Watch the driver move.</p>
+      </div>
+    </section>
+
+    <section class="chapter tall" id="quiet" data-chapter>
+      <div class="panel right">
+        <p class="eyebrow">Noise cancelling</p>
+        <h2>Turn the world <em>down.</em></h2>
+        <p>Six microphones hear the room around you, and the Arc chip plays back its exact opposite. Keep scrolling to switch it on.</p>
+        <p class="meter"><span>Noise reduction</span><b id="anc-db">0 dB</b></p>
+      </div>
+    </section>
+
+    <section class="chapter" id="battery" data-chapter>
+      <div class="panel left">
+        <p class="eyebrow">Battery</p>
+        <h2 class="big"><span id="hours">0</span><em>hours.</em></h2>
+        <p>A week of commutes on one charge, with noise cancelling on. Ten minutes on USB-C gives you five more hours.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="colours" data-chapter>
+      <div class="panel bottom">
+        <p class="eyebrow">Colours</p>
+        <h2>Four finishes. <em id="finish-name">Graphite.</em></h2>
+        <div class="swatches" role="group" aria-label="Choose a finish" id="swatches"></div>
+        <p class="small">Drag the headphones to turn them round.</p>
+      </div>
+    </section>
+
+    <section class="chapter" id="buy" data-chapter>
+      <div class="panel left">
+        <p class="eyebrow">Soundline Arc</p>
+        <h2>Yours, <em>quietly.</em></h2>
+        <p class="price">R 5 499</p>
+        <button class="pill big" id="preorder" type="button">Pre-order</button>
+        <dl class="specs">
+          <div><dt>Driver</dt><dd>40 mm, beryllium-coated</dd></div>
+          <div><dt>Battery</dt><dd>60 h (ANC on), USB-C fast charge</dd></div>
+          <div><dt>Noise cancelling</dt><dd>Adaptive, up to 38 dB</dd></div>
+          <div><dt>Microphones</dt><dd>6, beamforming</dd></div>
+          <div><dt>Connection</dt><dd>Bluetooth 5.4, multipoint</dd></div>
+          <div><dt>Weight</dt><dd>268 g</dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p><b>This is a concept.</b> Soundline and the Arc aren't real products: this page is a portfolio piece by Dan, built with Three.js, GSAP ScrollTrigger and Lenis. Everything in 3D is modelled in code.</p>
+    <p><a href="https://github.com/dandee057/soundline">Source on GitHub</a> · <a href="https://dandeegames.com/">dandeegames.com</a></p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="loader" id="loader" aria-hidden="true"><span>sound<i>line</i></span></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
