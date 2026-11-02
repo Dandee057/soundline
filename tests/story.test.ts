@@ -44,3 +44,26 @@ test("colours mix as expected", () => {
   assert.equal(mixHex("#123456", "#abcdef", 0), "#123456");
   for (const c of COLOURWAYS) for (const v of [c.shell, c.metal, c.cushion, c.led, c.accent, ...c.bg]) assert.match(v, /^#[0-9a-f]{6}$/);
 });
+
+test("the soundtrack builds from the pad alone to every layer", async () => {
+  const { layerLevels } = await import("../src/audio.ts");
+  const quiet = layerLevels({ energy: 0, noise: 0 }), full = layerLevels({ energy: 1, noise: 0 });
+  assert.equal(quiet.pad, 1);
+  for (const k of ["arp", "hats", "bass", "drums"] as const) { assert.equal(quiet[k], 0, k); assert.equal(full[k], 1, k); }
+  // layers come in in order as the energy rises
+  const order = ["arp", "hats", "bass", "drums"] as const;
+  for (let e = 0; e <= 1; e += 0.05) {
+    const l = layerLevels({ energy: e, noise: 0 });
+    for (let i = 1; i < order.length; i++) assert.ok(l[order[i]] <= l[order[i - 1]] + 1e-9, `${order[i]} before ${order[i - 1]} at ${e}`);
+  }
+});
+
+test("the music is at its fullest in the driver and battery chapters, and the noise only plays before noise cancelling", () => {
+  const placed = schedule(KEYFRAMES, layout, 1000);
+  const at = (chapter: string) => placed[KEYFRAMES.findIndex((k) => k.chapter === chapter)].state;
+  assert.equal(at("driver").energy, 1);
+  assert.equal(at("battery").energy, 1);
+  assert.ok(at("hero").energy < at("design").energy && at("design").energy < at("inside").energy);
+  const ancOn = placed.find((p) => p.state.anc === 1)!.state;
+  assert.equal(ancOn.field * (1 - ancOn.anc), 0);
+});

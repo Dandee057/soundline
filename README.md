@@ -15,8 +15,8 @@ A scroll-driven 3D product page for a pair of headphones that don't exist. As yo
 | Quiet, by design | The headphones float and sway; drag to turn them |
 | Machined, not moulded | The camera swings round to a side view |
 | Seven layers, one sound | Every part slides apart along its cup's axis, then labels pin themselves to the parts |
-| Big sound, small cone | Close up on the driver. **Play the demo loop** and the cone moves with the bass |
-| Turn the world down | A wall of noisy sound waves; scrolling switches noise cancelling on and the waves near the cups go calm |
+| Big sound, small cone | Close up on the driver, and with the sound on the cone moves with the bass |
+| Turn the world down | A wall of noisy sound waves and the rumble of a train; scrolling switches noise cancelling on, the waves near the cups go calm and the train goes quiet |
 | 60 hours | The cup opens, the battery glows and the hours count up |
 | Four finishes | Pick a colourway: the materials, the page and the accent colour all change together |
 
@@ -34,7 +34,7 @@ It works on phones (the product sits above a text sheet), with a keyboard, and w
 
 **Labels in HTML, pinned to 3D.** [`src/callouts.ts`](src/callouts.ts) projects each part's anchor to the screen every frame and lines the labels up in a column beside the product, in the same order as their parts, so the leader lines don't cross. Being real text, the labels stay sharp and screen readers can read them.
 
-**Sound from nothing.** [`src/audio.ts`](src/audio.ts) synthesises a short loop with the Web Audio API (kick, bass, pad, hats). An analyser measures the low end, and that moves the driver cones.
+**A soundtrack that follows the scroll.** Turn the sound on (top right, or press M) and [`src/audio.ts`](src/audio.ts) plays an eight-bar beat synthesised with the Web Audio API: pad, electric-piano stabs, an arpeggio, hats, bass, kick and clap, plus a train's rumble. Each is its own layer, and an `energy` value in the scroll story fades them in and out, so the track starts as a pad at the top and is in full swing by the driver close-up. Notes are scheduled slightly ahead on the audio clock so the timing stays tight. An analyser measures the low end, and that moves the driver cones. Browsers only allow sound after a click, so it never starts by itself; once turned on, it's remembered for the next visit and pauses while the tab is hidden.
 
 **Light on the device.** There's no shadow map (a soft contact shadow texture instead), no post-processing, the pixel ratio is capped, and the text is all HTML. If WebGL isn't available, the page is still a complete, readable product page.
 
@@ -43,7 +43,7 @@ It works on phones (the product sits above a text sheet), with a keyboard, and w
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm test         # the story's keyframe scheduling and colour data
+npm test         # the story's keyframe scheduling, soundtrack layers and colour data
 npm run build    # type-checks, then builds to dist/
 ```
 
@@ -57,14 +57,14 @@ src/main.ts            scroll timeline, smooth scroll, chapters, colours, drag, 
 src/story.ts           the keyframes, and schedule() that places them on the page
 src/colourways.ts      the four finishes
 src/callouts.ts        labels pinned to 3D parts
-src/audio.ts           the synthesised demo loop and its bass meter
+src/audio.ts           the synthesised soundtrack, its layers and the bass meter
 src/scene/stage.ts     renderer, studio light, camera orbit, view offset
 src/scene/headphones.ts  the headphones: parts, exploded view, materials
 src/scene/geometry.ts  sweep, lathe, rounded outline and rounded box helpers
 src/scene/field.ts     the noise-cancelling wave shader
 src/scene/textures.ts  grille, circuit board, battery label and shadow, drawn on a canvas
 src/style.css          layout, type, phone layout
-tests/                 keyframe scheduling and colour data
+tests/                 keyframe scheduling, the soundtrack's layers, colour data
 ```
 
 ## Built with

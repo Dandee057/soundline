@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "./style.css";
-import { DemoLoop } from "./audio.ts";
+import { Soundtrack } from "./audio.ts";
 import { Callouts } from "./callouts.ts";
 import { COLOURWAYS, type Colourway } from "./colourways.ts";
 import { WaveField } from "./scene/field.ts";
@@ -30,7 +30,7 @@ const headphones = new Headphones();
 const field = new WaveField();
 if (stage) stage.scene.add(headphones.root, field.mesh);
 const callouts = new Callouts($("callouts"));
-const loop = new DemoLoop();
+const music = new Soundtrack();
 
 const state: State = { ...START };
 
@@ -92,7 +92,6 @@ const seen = new IntersectionObserver((entries) => {
   for (const e of entries) {
     e.target.querySelector(".panel")?.classList.toggle("in", e.isIntersecting);
     navLinks.get(e.target.id)?.classList.toggle("on", e.isIntersecting);
-    if (e.target.id === "driver" && !e.isIntersecting && loop.playing) togglePlay();
   }
 }, { rootMargin: "-40% 0px -40% 0px" });
 document.querySelectorAll("[data-chapter]").forEach((c) => seen.observe(c));
@@ -137,13 +136,42 @@ canvas.addEventListener("pointercancel", endDrag);
 
 /* ---------- Sound and the pre-order button ---------- */
 
-const play = $<HTMLButtonElement>("play");
-function togglePlay(): void {
-  if (loop.playing) loop.stop(); else loop.start();
-  play.setAttribute("aria-pressed", String(loop.playing));
-  play.querySelector(".label")!.textContent = loop.playing ? "Stop the demo loop" : "Play the demo loop";
+// Browsers only allow sound after the visitor clicks, taps or presses a key, so the music never starts by itself.
+// Turning it on is remembered: next visit it starts on the first click or key press.
+const soundBtn = $<HTMLButtonElement>("sound"), play = $<HTMLButtonElement>("play"), listen = $<HTMLButtonElement>("listen");
+const remember = (on: boolean) => { try { localStorage.setItem("soundline.sound", on ? "on" : "off"); } catch { /* storage unavailable */ } };
+function setSound(on: boolean): void {
+  if (on) music.start(); else music.stop();
+  remember(on);
+  soundBtn.setAttribute("aria-pressed", String(on));
+  soundBtn.querySelector(".sound-label")!.textContent = on ? "Sound on" : "Sound off";
+  play.setAttribute("aria-pressed", String(on));
+  play.querySelector(".label")!.textContent = on ? "Turn the music off" : "Turn the music on";
+  listen.classList.toggle("gone", on);
 }
-play.addEventListener("click", togglePlay);
+const toggleSound = () => setSound(!music.playing);
+soundBtn.addEventListener("click", toggleSound);
+play.addEventListener("click", toggleSound);
+listen.addEventListener("click", () => setSound(true));
+addEventListener("keydown", (e) => { if (e.key.toLowerCase() === "m" && !e.ctrlKey && !e.metaKey && !e.altKey) toggleSound(); });
+
+let wanted = false;
+try { wanted = localStorage.getItem("soundline.sound") === "on"; } catch { /* storage unavailable */ }
+if (wanted) {
+  const resume = (e: Event) => {
+    removeEventListener("pointerdown", resume, true); removeEventListener("keydown", resume, true);
+    // a click on a sound button handles itself
+    if (!(e.target as HTMLElement).closest?.("#sound, #play, #listen") && !music.playing) setSound(true);
+  };
+  addEventListener("pointerdown", resume, true);
+  addEventListener("keydown", resume, true);
+}
+// quiet while the tab is hidden, back when it returns
+let hiddenWhilePlaying = false;
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && music.playing) { hiddenWhilePlaying = true; music.stop(); }
+  else if (!document.hidden && hiddenWhilePlaying) { hiddenWhilePlaying = false; music.start(); }
+});
 
 let toastTimer = 0;
 $("preorder").addEventListener("click", () => {
@@ -170,6 +198,8 @@ function frame(): void {
   const d = Math.round(state.anc * 38);
   if (d !== lastDb) { db.textContent = d ? `−${d} dB` : "0 dB"; lastDb = d; }
   progress.style.transform = `scaleX(${trigger ? trigger.progress : 0})`;
+  // the soundtrack builds with the story; the train noise is there until noise cancelling switches it off
+  music.setMix({ energy: state.energy, noise: state.field * (1 - state.anc) });
 
   if (!stage) return;
 
@@ -181,7 +211,7 @@ function frame(): void {
   headphones.root.rotation.y = (sway + drag) * state.sway + drag * (1 - state.sway);
   headphones.setExplode(state.explode, state.focus);
   headphones.setCharge(state.charge);
-  headphones.drive = loop.level();
+  headphones.drive = music.level();
   headphones.update(reduceMotion ? 0 : t);
   field.update(t, state.field, state.anc, ledColour.set(finish.led));
 
@@ -211,6 +241,7 @@ setTimeout(() => root.classList.add("loaded"), 2500); // never leave the curtain
 if (new URLSearchParams(location.search).has("debug")) {
   (window as unknown as { soundline: object }).soundline = {
     state,
+    music: () => ({ playing: music.playing, level: music.level() }),
     jump: (y: number) => { if (lenis) lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); ScrollTrigger.update(); trigger?.animation?.progress(trigger.progress); },
     chapterTop: (id: string) => $(id).offsetTop,
     chapterHeight: (id: string) => $(id).offsetHeight

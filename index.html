@@ -20,6 +20,7 @@
     <nav aria-label="Sections">
       <a href="#design">Design</a><a href="#inside">Inside</a><a href="#driver">Sound</a><a href="#quiet">Quiet</a><a href="#battery">Battery</a><a href="#colours">Colours</a>
     </nav>
+    <button class="sound" id="sound" type="button" aria-pressed="false" aria-label="Music"><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sound-label">Sound off</span></button>
     <a class="pill" href="#buy">Pre-order</a>
     <div class="progress" aria-hidden="true"><i id="progress"></i></div>
   </header>
@@ -30,6 +31,7 @@
         <p class="eyebrow">Soundline Arc</p>
         <h1>Quiet, <em>by design.</em></h1>
         <p class="lede">Wireless over-ear headphones with adaptive noise cancelling and a 60-hour battery.</p>
+        <button class="listen" id="listen" type="button"><span aria-hidden="true">♪</span> Scroll with sound on</button>
         <p class="scroll-cue" aria-hidden="true"><span></span>Scroll to explore</p>
       </div>
     </section>
@@ -60,8 +62,8 @@
         <p class="eyebrow">Sound</p>
         <h2>Big sound, <em>small cone.</em></h2>
         <p>A 40&nbsp;mm driver with a beryllium-coated dome: stiff enough not to flex, light enough to stop the moment a note does. Bass you feel, highs that don't hiss.</p>
-        <button class="play" id="play" type="button" aria-pressed="false"><span class="icon" aria-hidden="true"></span><span class="label">Play the demo loop</span></button>
-        <p class="small">Made in your browser with the Web Audio API. Watch the driver move.</p>
+        <button class="play" id="play" type="button" aria-pressed="false"><span class="icon" aria-hidden="true"></span><span class="label">Turn the music on</span></button>
+        <p class="small">The soundtrack is made live in your browser, and builds as you scroll. Watch the driver move with the bass.</p>
       </div>
     </section>
 
@@ -69,7 +71,7 @@
       <div class="panel right">
         <p class="eyebrow">Noise cancelling</p>
         <h2>Turn the world <em>down.</em></h2>
-        <p>Six microphones hear the room around you, and the Arc chip plays back its exact opposite. Keep scrolling to switch it on.</p>
+        <p>Six microphones hear the room around you, and the Arc chip plays back its exact opposite. Keep scrolling to switch it on, and listen to the train go quiet.</p>
         <p class="meter"><span>Noise reduction</span><b id="anc-db">0 dB</b></p>
       </div>
     </section>
