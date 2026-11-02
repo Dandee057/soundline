@@ -37,10 +37,11 @@ const state: State = { ...START };
 /* ---------- Smooth scrolling ---------- */
 
 let lenis: Lenis | null = null;
+const lenisRaf = (t: number) => lenis?.raf(t * 1000);
 if (!reduceMotion) {
   lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 0.9 });
   lenis.on("scroll", ScrollTrigger.update);
-  gsap.ticker.add((t) => lenis!.raf(t * 1000));
+  gsap.ticker.add(lenisRaf);
   gsap.ticker.lagSmoothing(0);
 }
 for (const a of document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
@@ -188,8 +189,8 @@ const ledColour = new THREE.Color();
 const hours = $("hours"), db = $("anc-db"), progress = $("progress");
 let lastHours = -1, lastDb = -1, last = performance.now();
 
-function frame(): void {
-  const now = performance.now(), dt = Math.min(0.1, (now - last) / 1000), t = now / 1000;
+function frame(at?: number): void {
+  const now = typeof at === "number" ? at : performance.now(), dt = Math.min(0.1, Math.max(0, (now - last) / 1000)), t = now / 1000;
   last = now;
 
   // HTML that follows the scroll
@@ -228,7 +229,8 @@ function frame(): void {
 
 resize();
 buildTimeline();
-gsap.ticker.add(frame);
+let live = true;
+gsap.ticker.add(() => { if (live) frame(); });
 // the fonts change the page's height a little: rebuild once they're in, then lift the curtain
 void document.fonts.ready.then(() => {
   buildTimeline();
@@ -242,6 +244,12 @@ if (new URLSearchParams(location.search).has("debug")) {
   (window as unknown as { soundline: object }).soundline = {
     state,
     music: () => ({ playing: music.playing, level: music.level() }),
+    /** For recording a video: stop the live loop, then draw the page at scroll position `y` and time `ms`, exactly. */
+    capture: () => { live = false; last = 0; gsap.ticker.remove(lenisRaf); lenis?.destroy(); trigger?.kill(false, true); },
+    shoot: (y: number, ms: number) => {
+      scrollTo(0, y); timeline?.seek(y); frame(ms);
+      progress.style.transform = `scaleX(${Math.min(1, y / Math.max(1, root.scrollHeight - innerHeight))})`;
+    },
     jump: (y: number) => { if (lenis) lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); ScrollTrigger.update(); trigger?.animation?.progress(trigger.progress); },
     chapterTop: (id: string) => $(id).offsetTop,
     chapterHeight: (id: string) => $(id).offsetHeight

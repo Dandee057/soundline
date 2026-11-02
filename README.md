@@ -4,7 +4,7 @@ A scroll-driven 3D product page for a pair of headphones that don't exist. As yo
 
 **[Open the page →](https://dandee057.github.io/soundline/)**
 
-![The exploded view, with labels pinned to each part](docs/inside.jpg)
+![A scroll through the page: the headphones turn, come apart, cancel the noise, charge and change colour](docs/tour.gif)
 
 > Soundline and the Arc are made up. This is a portfolio piece showing the kind of scroll-driven 3D product page brands use to launch hardware.
 
@@ -22,7 +22,20 @@ A scroll-driven 3D product page for a pair of headphones that don't exist. As yo
 
 It works on phones (the product sits above a text sheet), with a keyboard, and with *reduce motion* turned on (no smooth scrolling or idle animation; the scene still follows your scroll).
 
-![Noise cancelling calming the wave field near the cups](docs/quiet.jpg)
+| | |
+| --- | --- |
+| ![The exploded view, with labels pinned to each part](docs/screens/03-inside.jpg) | ![Close up on the driver](docs/screens/04-driver.jpg) |
+| ![Noise cancelling calming the wave field near the cups](docs/screens/05-quiet.jpg) | ![The battery charging to 60 hours](docs/screens/06-battery.jpg) |
+| ![The Coral finish](docs/screens/07-colours.jpg) | ![The specs and pre-order](docs/screens/08-buy.jpg) |
+
+On a phone the product sits above a text sheet:
+
+<p>
+  <img src="docs/screens/phone-01-hero.jpg" width="190" alt="Phone: the title">
+  <img src="docs/screens/phone-03-inside.jpg" width="190" alt="Phone: the exploded view">
+  <img src="docs/screens/phone-05-quiet.jpg" width="190" alt="Phone: noise cancelling">
+  <img src="docs/screens/phone-07-colours.jpg" width="190" alt="Phone: colours">
+</p>
 
 ## How it works
 
@@ -46,6 +59,8 @@ npm run dev      # http://localhost:5173
 npm test         # the story's keyframe scheduling, soundtrack layers and colour data
 npm run build    # type-checks, then builds to dist/
 ```
+
+**Recording it:** open the page with `?debug` and call `soundline.capture()`, then `soundline.shoot(scrollY, timeMs)` draws one exact frame at that scroll position and time, without smooth scrolling. That's how the GIF above was made: a script stepped through the page at 30 frames a second and screenshotted each frame.
 
 **Deploying:** in the repository, go to *Settings → Pages* and set *Source* to **GitHub Actions**. Every push to `main` then tests, builds and deploys through [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
 
