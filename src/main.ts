@@ -246,8 +246,8 @@ if (new URLSearchParams(location.search).has("debug")) {
     music: () => ({ playing: music.playing, level: music.level() }),
     /** For recording a video: stop the live loop, then draw the page at scroll position `y` and time `ms`, exactly. */
     capture: () => { live = false; last = 0; gsap.ticker.remove(lenisRaf); lenis?.destroy(); trigger?.kill(false, true); },
-    shoot: (y: number, ms: number) => {
-      scrollTo(0, y); timeline?.seek(y); frame(ms);
+    shoot: (y: number, ms: number, override: Partial<State> = {}) => {
+      scrollTo(0, y); timeline?.seek(y); Object.assign(state, override); frame(ms);
       progress.style.transform = `scaleX(${Math.min(1, y / Math.max(1, root.scrollHeight - innerHeight))})`;
     },
     jump: (y: number) => { if (lenis) lenis.scrollTo(y, { immediate: true }); else scrollTo(0, y); ScrollTrigger.update(); trigger?.animation?.progress(trigger.progress); },
